@@ -12,7 +12,7 @@ integrated with web applications and to gain hands-on experience with full-stack
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/StockVision-AI.git
+   git clone https://github.com/nandakshat9988/StockVision-AI.git
    cd StockVision-AI
 ````
 
