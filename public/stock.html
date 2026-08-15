@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Stock Dashboard</title>
+
+    <link rel="stylesheet" href="stock.css">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <header>
+
+        <button onclick="window.location.href='index.html'" class="back-btn">
+            ← Back
+        </button>
+
+        <h1>Stock Prediction Dashboard</h1>
+
+    </header>
+
+    <!-- Status / Error Banner -->
+    <div id="statusBanner" class="status-banner"></div>
+
+    <!-- Company Card -->
+
+    <div class="company-card">
+
+        <div id="companyInfo"></div>
+
+    </div>
+
+    <!-- Prediction Cards -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>Current Price</h3>
+
+            <p id="currentPrice">--</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Tomorrow Prediction</h3>
+
+            <p id="predictedPrice">--</p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Growth</h3>
+
+            <p id="growth">--</p>
+
+        </div>
+
+    </div>
+
+    <!-- Recommendation -->
+
+    <div class="recommendation">
+
+        <h2>Recommendation</h2>
+
+        <h1 id="recommendation">--</h1>
+
+    </div>
+
+    <!-- Prediction Summary -->
+
+    <div class="prediction-box">
+
+    <h2>Prediction Summary</h2>
+
+    <table class="summary-table">
+
+        <tr>
+            <td>Current Price</td>
+            <td id="summaryCurrent">--</td>
+        </tr>
+
+        <tr>
+            <td>Tomorrow Prediction</td>
+            <td id="summaryPrediction">--</td>
+        </tr>
+
+        <tr>
+            <td>Expected Growth</td>
+            <td id="summaryGrowth">--</td>
+        </tr>
+
+        <tr>
+            <td>Recommendation</td>
+            <td id="summaryRecommendation">--</td>
+        </tr>
+
+    </table>
+
+</div>
+
+    <!-- Chart -->
+
+    <div class="chart-box">
+
+        <h2>Price History</h2>
+
+        <canvas id="stockChart"></canvas>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="stock.js"></script>
+
+</body>
+
+</html>

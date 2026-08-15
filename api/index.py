@@ -1,15 +1,22 @@
-from flask import Flask, request, jsonify
+import os
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import yfinance as yf
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-app = Flask(__name__)
+# Determine static assets directory
+base_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(base_dir, ".."))
+public_dir = os.path.join(parent_dir, "public")
+frontend_dir = os.path.join(parent_dir, "frontend")
+
+static_dir = public_dir if os.path.isdir(public_dir) else frontend_dir
+
+app = Flask(__name__, static_folder=static_dir)
 CORS(app)
 
 
-@app.route("/", methods=["GET"])
-@app.route("/api", methods=["GET"])
 @app.route("/health", methods=["GET"])
 @app.route("/api/health", methods=["GET"])
 def health_check():
@@ -69,6 +76,20 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": f"Failed to generate prediction: {str(e)}"}), 500
+
+
+@app.route("/", methods=["GET"])
+def root_index():
+    if os.path.isdir(static_dir) and os.path.exists(os.path.join(static_dir, "index.html")):
+        return send_from_directory(static_dir, "index.html")
+    return jsonify({"status": "healthy", "service": "StockVision AI API"}), 200
+
+
+@app.route("/<path:path>", methods=["GET"])
+def catch_all_static(path):
+    if os.path.isdir(static_dir) and os.path.exists(os.path.join(static_dir, path)):
+        return send_from_directory(static_dir, path)
+    return jsonify({"error": "Resource not found"}), 404
 
 
 if __name__ == "__main__":

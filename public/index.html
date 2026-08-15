@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StockVision AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+
+        📈 StockVision AI
+
+    </div>
+
+</nav>
+
+<section class="hero">
+
+    <h1>
+
+        Predict Stock Prices <br>
+
+        using Machine Learning
+
+    </h1>
+
+    <p>
+
+        Search any stock and get company details with AI-powered price prediction.
+
+    </p>
+
+</section>
+
+<section class="search-section">
+
+    <div class="search-card">
+
+        <h2>Search Your Stock</h2>
+
+        <p>Enter a stock symbol like AAPL, MSFT, TSLA, GOOGL</p>
+
+        <input
+            type="text"
+            id="stockInput"
+            placeholder="Search Stock">
+
+        <div id="suggestions"></div>
+
+        <button onclick="selectStock()">
+
+            Predict Stock
+
+        </button>
+
+    </div>
+
+</section>
+
+<section class="features">
+
+    <div class="feature">
+
+        <div class="icon">📊</div>
+
+        <h3>Company Details</h3>
+
+        <p>
+
+            View exchange, IPO, industry and country.
+
+        </p>
+
+    </div>
+
+    <div class="feature">
+
+        <div class="icon">🤖</div>
+
+        <h3>ML Prediction</h3>
+
+        <p>
+
+            Predict tomorrow's closing price using Machine Learning.
+
+        </p>
+
+    </div>
+
+    <div class="feature">
+
+        <div class="icon">📈</div>
+
+        <h3>Investment Insight</h3>
+
+        <p>
+
+            Get Buy, Hold and Sell recommendation.
+
+        </p>
+
+    </div>
+
+</section>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

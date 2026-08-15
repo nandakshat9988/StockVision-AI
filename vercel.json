@@ -2,11 +2,11 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/predict",
       "destination": "/api/index.py"
     },
     {
-      "source": "/predict",
+      "source": "/api/predict",
       "destination": "/api/index.py"
     },
     {
@@ -14,8 +14,8 @@
       "destination": "/api/index.py"
     },
     {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "source": "/api/health",
+      "destination": "/api/index.py"
     }
   ]
 }
