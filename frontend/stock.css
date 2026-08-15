@@ -178,6 +178,43 @@ canvas{
     height:400px !important;
 }
 
+/* Alert / Status Banner */
+.status-banner {
+    display: none;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-size: 15px;
+    font-weight: 500;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.status-banner.error {
+    display: flex;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #ef4444;
+    color: #fca5a5;
+}
+
+.status-banner.loading {
+    display: flex;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid #38bdf8;
+    color: #bae6fd;
+}
+
+.status-banner button {
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 15px;
+}
+
 /* Utility */
 
 .green{
@@ -223,4 +260,4 @@ canvas{
     height:250px !important;
 }
 
-}
+}

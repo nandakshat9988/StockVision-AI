@@ -9,17 +9,25 @@ CORS(app)
 
 
 @app.route("/", methods=["GET"])
+@app.route("/api", methods=["GET"])
 @app.route("/health", methods=["GET"])
+@app.route("/api/health", methods=["GET"])
 def health_check():
     return jsonify({
         "status": "healthy",
-        "service": "StockVision AI Backend"
+        "service": "StockVision AI Serverless API",
+        "endpoints": {
+            "predict": "POST /predict or /api/predict"
+        }
     }), 200
 
 
-@app.route("/predict", methods=["POST"])
-@app.route("/api/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "OPTIONS"])
+@app.route("/api/predict", methods=["POST", "OPTIONS"])
 def predict():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
     try:
         data = request.get_json(force=True, silent=True) or {}
         symbol = data.get("symbol", "").strip()
@@ -38,6 +46,7 @@ def predict():
         if len(df) < 5:
             return jsonify({"error": f"Insufficient historical data for '{symbol}'"}), 400
 
+        # Day number index for regression
         df["Day"] = range(len(df))
 
         X = df[["Day"]]
