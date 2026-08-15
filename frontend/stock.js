@@ -4,13 +4,13 @@ const stock = (localStorage.getItem("stock") || "").trim().toUpperCase();
 let chartInstance = null;
 
 function getApiEndpoint() {
-    // Check if hosted or served locally
+    // If testing on a separate local port like Live Server 5500, connect to Flask 5000
     const isLiveServer = window.location.port === "5500" || window.location.port === "5501" || window.location.port === "8080" || window.location.protocol === "file:";
     if (isLiveServer) {
-        return "http://127.0.0.1:5000/predict";
+        return "http://127.0.0.1:5000/api/predict";
     }
-    // In production (Vercel) or when served through Flask/proxy, use relative path
-    return "/predict";
+    // In production on Vercel or same-origin server, call /api/predict
+    return "/api/predict";
 }
 
 function showStatus(message, type = "loading") {
@@ -44,7 +44,7 @@ async function loadStock() {
 
     try {
         const response = await fetch(
-            `https://finnhub.io/api/v1/stock/profile2?symbol=${stock}&token=${apiKey}`
+            `https://finnhub.io/api/v1/stock/profile2?symbol=${encodeURIComponent(stock)}&token=${apiKey}`
         );
         const data = await response.json();
 
@@ -107,10 +107,18 @@ async function predictStock(symbol) {
             body: JSON.stringify({ symbol: symbol })
         });
 
-        const data = await response.json();
+        // Safely parse JSON or text error response
+        let data = {};
+        const responseText = await response.text();
+        try {
+            data = JSON.parse(responseText);
+        } catch (jsonErr) {
+            console.error("Non-JSON response from server:", responseText);
+            throw new Error(`Server returned unexpected response (${response.status}). Please check ticker '${symbol}'.`);
+        }
 
         if (!response.ok || data.error) {
-            throw new Error(data.error || `Server responded with status ${response.status}`);
+            throw new Error(data.error || `Server returned error (${response.status})`);
         }
 
         // Hide status banner on success
