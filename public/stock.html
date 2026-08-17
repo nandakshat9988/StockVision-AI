@@ -1,128 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-    <title>Stock Dashboard</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockVision AI - Forecast & Analytics</title>
     <link rel="stylesheet" href="stock.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
 <div class="dashboard">
 
-    <header>
-
+    <!-- Header Navigation -->
+    <header class="dash-header">
         <button onclick="window.location.href='index.html'" class="back-btn">
-            ← Back
+            ← Search Another Stock
         </button>
-
-        <h1>Stock Prediction Dashboard</h1>
-
+        <h1>📈 StockVision <span class="accent-text">AI Dashboard</span></h1>
     </header>
 
     <!-- Status / Error Banner -->
     <div id="statusBanner" class="status-banner"></div>
 
-    <!-- Company Card -->
-
+    <!-- Company Profile Card -->
     <div class="company-card">
-
-        <div id="companyInfo"></div>
-
+        <div id="companyInfo" class="company-info-container"></div>
     </div>
 
-    <!-- Prediction Cards -->
-
-    <div class="cards">
-
-        <div class="card">
-
-            <h3>Current Price</h3>
-
-            <p id="currentPrice">--</p>
-
+    <!-- Multi-Timeframe Forecasts -->
+    <section class="section-container">
+        <div class="section-title">
+            <h2>🎯 Multi-Timeframe AI Forecasts</h2>
+            <span class="badge-tag">Random Forest ML</span>
         </div>
+        <div class="forecast-cards">
+            <!-- 1 Day Forecast -->
+            <div class="card forecast-card">
+                <div class="card-header">
+                    <span class="horizon-badge">1-Day Horizon</span>
+                    <span class="horizon-label">Tomorrow</span>
+                </div>
+                <div class="price-val" id="pred1dPrice">--</div>
+                <div class="growth-val" id="pred1dGrowth">--</div>
+                <div class="rec-badge" id="pred1dRec">--</div>
+            </div>
 
-        <div class="card">
+            <!-- 7 Days Forecast -->
+            <div class="card forecast-card">
+                <div class="card-header">
+                    <span class="horizon-badge">7-Day Horizon</span>
+                    <span class="horizon-label">1 Week</span>
+                </div>
+                <div class="price-val" id="pred7dPrice">--</div>
+                <div class="growth-val" id="pred7dGrowth">--</div>
+                <div class="rec-badge" id="pred7dRec">--</div>
+            </div>
 
-            <h3>Tomorrow Prediction</h3>
-
-            <p id="predictedPrice">--</p>
-
+            <!-- 30 Days Forecast -->
+            <div class="card forecast-card">
+                <div class="card-header">
+                    <span class="horizon-badge">30-Day Horizon</span>
+                    <span class="horizon-label">1 Month</span>
+                </div>
+                <div class="price-val" id="pred30dPrice">--</div>
+                <div class="growth-val" id="pred30dGrowth">--</div>
+                <div class="rec-badge" id="pred30dRec">--</div>
+            </div>
         </div>
+    </section>
 
-        <div class="card">
-
-            <h3>Growth</h3>
-
-            <p id="growth">--</p>
-
+    <!-- Technical Indicators Section -->
+    <section class="section-container">
+        <div class="section-title">
+            <h2>📊 Quantitative Technical Indicators</h2>
+            <span class="badge-tag">TA Engine</span>
         </div>
+        <div class="indicators-grid">
+            <!-- RSI -->
+            <div class="indicator-card">
+                <div class="ind-title">RSI (14 Period)</div>
+                <div class="ind-val" id="indRsi">--</div>
+                <div class="ind-status" id="indRsiStatus">--</div>
+            </div>
 
-    </div>
+            <!-- MACD -->
+            <div class="indicator-card">
+                <div class="ind-title">MACD (12, 26, 9)</div>
+                <div class="ind-val" id="indMacd">--</div>
+                <div class="ind-status" id="indMacdStatus">--</div>
+            </div>
 
-    <!-- Recommendation -->
+            <!-- Moving Averages -->
+            <div class="indicator-card">
+                <div class="ind-title">SMA (20 / 50 Days)</div>
+                <div class="ind-val" id="indSma">--</div>
+                <div class="ind-status" id="indTrend">--</div>
+            </div>
 
-    <div class="recommendation">
+            <!-- 20-Day EMA -->
+            <div class="indicator-card">
+                <div class="ind-title">EMA 20 & Trend</div>
+                <div class="ind-val" id="indEma20">--</div>
+                <div class="ind-status" id="indEmaTrend">--</div>
+            </div>
+        </div>
+    </section>
 
-        <h2>Recommendation</h2>
+    <!-- Interactive Price Chart with 30-Day Forecast Projection -->
+    <section class="section-container">
+        <div class="section-title">
+            <h2>📉 Price History & 30-Day Forward Projection</h2>
+            <span class="badge-tag">Interactive Chart</span>
+        </div>
+        <div class="chart-box">
+            <canvas id="stockChart"></canvas>
+        </div>
+    </section>
 
-        <h1 id="recommendation">--</h1>
+    <!-- News & AI Sentiment Analysis Section -->
+    <section class="section-container">
+        <div class="section-title">
+            <h2>📰 News & Market Sentiment Engine</h2>
+            <span class="badge-tag" id="sentimentBadge">NLP Sentiment</span>
+        </div>
+        <div class="sentiment-overview" id="sentimentSummaryBox">
+            <div class="sentiment-score-box">
+                <span class="sentiment-score-label">Sentiment Score:</span>
+                <span class="sentiment-score-val" id="sentimentScore">--</span>
+            </div>
+            <p class="sentiment-summary-text" id="sentimentSummary">Analyzing recent headlines...</p>
+        </div>
+        <div class="news-grid" id="newsGrid">
+            <!-- Dynamically populated news items -->
+        </div>
+    </section>
 
-    </div>
-
-    <!-- Prediction Summary -->
-
-    <div class="prediction-box">
-
-    <h2>Prediction Summary</h2>
-
-    <table class="summary-table">
-
-        <tr>
-            <td>Current Price</td>
-            <td id="summaryCurrent">--</td>
-        </tr>
-
-        <tr>
-            <td>Tomorrow Prediction</td>
-            <td id="summaryPrediction">--</td>
-        </tr>
-
-        <tr>
-            <td>Expected Growth</td>
-            <td id="summaryGrowth">--</td>
-        </tr>
-
-        <tr>
-            <td>Recommendation</td>
-            <td id="summaryRecommendation">--</td>
-        </tr>
-
-    </table>
-
-</div>
-
-    <!-- Chart -->
-
-    <div class="chart-box">
-
-        <h2>Price History</h2>
-
-        <canvas id="stockChart"></canvas>
-
-    </div>
+    <!-- Summary Details Table -->
+    <section class="section-container">
+        <div class="section-title">
+            <h2>📋 Full Analysis Matrix</h2>
+        </div>
+        <div class="prediction-box">
+            <table class="summary-table">
+                <tr>
+                    <td>Current Market Price</td>
+                    <td id="summaryCurrent" class="table-val">--</td>
+                </tr>
+                <tr>
+                    <td>Tomorrow (1-Day) Target</td>
+                    <td id="summary1d" class="table-val">--</td>
+                </tr>
+                <tr>
+                    <td>1-Week (7-Day) Target</td>
+                    <td id="summary7d" class="table-val">--</td>
+                </tr>
+                <tr>
+                    <td>1-Month (30-Day) Target</td>
+                    <td id="summary30d" class="table-val">--</td>
+                </tr>
+                <tr>
+                    <td>Primary AI Signal</td>
+                    <td id="summaryRec" class="table-val">--</td>
+                </tr>
+            </table>
+        </div>
+    </section>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="stock.js"></script>
 
 </body>
-
 </html>
