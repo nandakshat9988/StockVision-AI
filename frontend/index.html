@@ -4,120 +4,691 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StockVision AI - Intelligent Stock Price Forecasting Platform powered by Random Forest Machine Learning, Quantitative Technical Indicators (RSI, MACD, Moving Averages), and Real-Time Financial NLP News Sentiment Analysis.">
+    <meta name="keywords" content="Stock Prediction, Machine Learning, Random Forest, Technical Indicators, RSI, MACD, Stock Market AI, News Sentiment, Finnhub, Yahoo Finance">
 
-    <title>StockVision AI</title>
+    <title>StockVision AI — Next-Gen Quantitative Stock Intelligence & Forecasting</title>
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<nav>
+    <!-- Ambient Glowing Background FX -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+    <div class="grid-overlay"></div>
 
-    <div class="logo">
-
-        📈 StockVision AI
-
+    <!-- Live Market Ticker Marquee -->
+    <div class="ticker-wrap" aria-hidden="true">
+        <div class="ticker-move">
+            <div class="ticker-item"><span class="ticker-symbol">AAPL</span> $224.23 <span class="trend-up">▲ +1.42%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">NVDA</span> $128.50 <span class="trend-up">▲ +3.18%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">MSFT</span> $448.90 <span class="trend-up">▲ +0.88%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">TSLA</span> $218.80 <span class="trend-down">▼ -0.76%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">GOOGL</span> $179.30 <span class="trend-up">▲ +1.12%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">AMZN</span> $186.40 <span class="trend-up">▲ +1.79%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">META</span> $512.10 <span class="trend-up">▲ +2.35%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">NFLX</span> $685.20 <span class="trend-up">▲ +0.64%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">AMD</span> $154.60 <span class="trend-down">▼ -1.05%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">BTC-USD</span> $64,280 <span class="trend-up">▲ +2.90%</span></div>
+            <!-- Duplicated for continuous infinite marquee -->
+            <div class="ticker-item"><span class="ticker-symbol">AAPL</span> $224.23 <span class="trend-up">▲ +1.42%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">NVDA</span> $128.50 <span class="trend-up">▲ +3.18%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">MSFT</span> $448.90 <span class="trend-up">▲ +0.88%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">TSLA</span> $218.80 <span class="trend-down">▼ -0.76%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">GOOGL</span> $179.30 <span class="trend-up">▲ +1.12%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">AMZN</span> $186.40 <span class="trend-up">▲ +1.79%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">META</span> $512.10 <span class="trend-up">▲ +2.35%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">NFLX</span> $685.20 <span class="trend-up">▲ +0.64%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">AMD</span> $154.60 <span class="trend-down">▼ -1.05%</span></div>
+            <div class="ticker-item"><span class="ticker-symbol">BTC-USD</span> $64,280 <span class="trend-up">▲ +2.90%</span></div>
+        </div>
     </div>
 
-</nav>
+    <!-- Navigation Header -->
+    <header class="navbar-wrapper">
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">📈</span>
+                <span class="logo-text">StockVision <span class="gradient-text">AI</span></span>
+            </a>
 
-<section class="hero">
+            <ul class="nav-links">
+                <li><a href="#search-anchor">Search Terminal</a></li>
+                <li><a href="#problems">Problem Statements</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#tech-stack">Tech Stack</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
 
-    <h1>
+            <div class="nav-actions">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-label">API Operational</span>
+                </div>
+                <a href="#search-anchor" class="btn btn-nav">Launch Terminal ⚡</a>
+            </div>
+        </nav>
+    </header>
 
-        Predict Stock Prices <br>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-container">
+            <div class="hero-badge animate-fade-in">
+                <span class="badge-pulse"></span>
+                <span class="badge-text">⚡ Next-Gen Machine Learning & Financial Intelligence</span>
+            </div>
 
-        using Machine Learning
+            <h1 class="hero-title animate-slide-up">
+                Predict Stock Movements with <br>
+                <span class="gradient-text-hero">Quantitative AI & NLP Sentiment</span>
+            </h1>
 
-    </h1>
+            <p class="hero-subtitle animate-slide-up delay-1">
+                Bridge the gap between raw market data and institutional-grade analytics. StockVision AI pairs <strong>Random Forest Regressors</strong> with <strong>multi-horizon recursive forecasting</strong> (1D, 7D, 30D), quantitative momentum oscillators (RSI, MACD), and real-time financial news sentiment scoring.
+            </p>
 
-    <p>
+            <!-- Search Card Terminal -->
+            <div id="search-anchor" class="search-terminal-card animate-slide-up delay-2">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <span class="terminal-title">Stock Intelligence Terminal • v2.4</span>
+                    <span class="terminal-badge">LIVE INFERENCE</span>
+                </div>
 
-        Search any stock and get company details with AI-powered price prediction.
+                <div class="terminal-body">
+                    <label for="stockInput" class="search-label">
+                        Enter Ticker Symbol or Company Name
+                    </label>
 
-    </p>
+                    <div class="search-input-group">
+                        <span class="search-icon">🔍</span>
+                        <input
+                            type="text"
+                            id="stockInput"
+                            placeholder="e.g. AAPL, NVDA, TSLA, MSFT, AMZN, GOOGL"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <button class="btn btn-primary" id="predictBtn" onclick="selectStock()">
+                            <span>Predict Stock</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
 
-</section>
+                    <!-- Autocomplete Dropdown List -->
+                    <div id="suggestions" class="suggestions-box"></div>
 
-<section class="search-section">
+                    <!-- Quick-Select Ticker Pills -->
+                    <div class="quick-tickers">
+                        <span class="quick-label">⚡ Popular Tickers:</span>
+                        <div class="ticker-pills">
+                            <button type="button" class="ticker-pill" onclick="quickSelect('AAPL')">AAPL</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('NVDA')">NVDA</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('TSLA')">TSLA</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('MSFT')">MSFT</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('AMZN')">AMZN</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('GOOGL')">GOOGL</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('META')">META</button>
+                            <button type="button" class="ticker-pill" onclick="quickSelect('AMD')">AMD</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="search-card">
+            <!-- Impact Metrics / Key Statistics -->
+            <div class="metrics-grid animate-slide-up delay-3">
+                <div class="metric-card">
+                    <div class="metric-val">1D / 7D / 30D</div>
+                    <div class="metric-label">Multi-Horizon AI Forecasts</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">15+</div>
+                    <div class="metric-label">Engineered Quant Features</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">&lt; 50ms</div>
+                    <div class="metric-label">Serverless Inference Speed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val">100%</div>
+                    <div class="metric-label">Zero-Cost Serverless Ready</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <h2>Search Your Stock</h2>
+    <!-- Problem Statements Section -->
+    <section id="problems" class="section-padding">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Industry Challenges</span>
+                <h2 class="section-title">The Problems We Solve</h2>
+                <p class="section-description">
+                    Retail investors face severe systemic disadvantages in today's algorithmic markets. Here is how StockVision AI overcomes these bottlenecks.
+                </p>
+            </div>
 
-        <p>Enter a stock symbol like AAPL, MSFT, TSLA, GOOGL</p>
+            <div class="problem-grid">
+                <!-- Problem Card 1 -->
+                <div class="problem-card">
+                    <div class="problem-num">01</div>
+                    <div class="problem-icon">🧩</div>
+                    <h3>Fragmented Data & Tool Fatigue</h3>
+                    <p class="problem-text">
+                        Traders typically juggle 4 to 6 disconnected tools to inspect stock price history, company balance sheets, technical indicators, and breaking financial news headlines, causing cognitive overload and delayed execution.
+                    </p>
+                    <div class="solution-box">
+                        <span class="solution-tag">StockVision Solution</span>
+                        <p>A unified analytics hub combining live OHLCV price histories, Finnhub fundamentals, technical oscillators, and NLP sentiment on a single dashboard.</p>
+                    </div>
+                </div>
 
-        <input
-            type="text"
-            id="stockInput"
-            placeholder="Search Stock">
+                <!-- Problem Card 2 -->
+                <div class="problem-card">
+                    <div class="problem-num">02</div>
+                    <div class="problem-icon">📉</div>
+                    <h3>Flawed Linear Models & Heavy Overfitting</h3>
+                    <p class="problem-text">
+                        Elementary forecasting relies on naive linear regression ($y = mx + c$) which completely fails during market reversals, while complex Deep LSTMs are bloated (>150MB) and too slow for real-time serverless web execution.
+                    </p>
+                    <div class="solution-box">
+                        <span class="solution-tag">StockVision Solution</span>
+                        <p>Ensemble <strong>Random Forest Regressors</strong> with recursive auto-regressive lag updates that capture non-linear momentum patterns in under 50ms.</p>
+                    </div>
+                </div>
 
-        <div id="suggestions"></div>
+                <!-- Problem Card 3 -->
+                <div class="problem-card">
+                    <div class="problem-num">03</div>
+                    <div class="problem-icon">📰</div>
+                    <h3>Qualitative Sentiment Blindspot</h3>
+                    <p class="problem-text">
+                        Pure quantitative algorithms ignore breaking earnings reports, regulatory lawsuits, product launches, and macroeconomic policy shifts that trigger violent intraday volatility spikes.
+                    </p>
+                    <div class="solution-box">
+                        <span class="solution-tag">StockVision Solution</span>
+                        <p>Built-in <strong>NLP Financial Sentiment Engine</strong> that scrapes recent headlines, normalizes tokens, and computes Bullish/Bearish sentiment indices.</p>
+                    </div>
+                </div>
 
-        <button onclick="selectStock()">
+                <!-- Problem Card 4 -->
+                <div class="problem-card">
+                    <div class="problem-num">04</div>
+                    <div class="problem-icon">💳</div>
+                    <h3>Prohibitive Institutional Paywalls</h3>
+                    <p class="problem-text">
+                        Institutional hedge funds rely on Bloomberg and FactSet terminals costing upwards of $24,000 per year per seat, locking retail investors out of professional-grade quantitative modeling.
+                    </p>
+                    <div class="solution-box">
+                        <span class="solution-tag">StockVision Solution</span>
+                        <p>100% open-source, serverless architecture running on Python & Vercel Edge compute with zero API licensing cost for everyday traders.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            Predict Stock
+    <!-- Comprehensive Features Section -->
+    <section id="features" class="section-padding bg-surface">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Core Capabilities</span>
+                <h2 class="section-title">Complete Project Feature Suite</h2>
+                <p class="section-description">
+                    Explore all the algorithmic and analytical capabilities powering StockVision AI.
+                </p>
+            </div>
 
-        </button>
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="feature-icon">🎯</span>
+                    </div>
+                    <div class="feature-badge">Random Forest ML</div>
+                    <h3>Multi-Horizon AI Forecasting</h3>
+                    <p>
+                        Generates accurate price targets for <strong>1-Day (Tomorrow)</strong>, <strong>7-Day (1-Week)</strong>, and <strong>30-Day (1-Month)</strong> forward trajectories using recursive feature recalculation.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Recursive auto-regressive lag updates</li>
+                        <li>Automated dynamic feature matrix synthesis</li>
+                        <li>Resistant to outlier overfitting</li>
+                    </ul>
+                </div>
 
-    </div>
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="feature-icon">📊</span>
+                    </div>
+                    <div class="feature-badge">Vectorized TA</div>
+                    <h3>Quantitative Technical Indicators</h3>
+                    <p>
+                        High-speed vectorized mathematical computations for core market momentum oscillators and trend indicators directly using Pandas and NumPy.
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>RSI (14-Period)</strong> with Oversold & Overbought bounds</li>
+                        <li><strong>MACD (12, 26, 9)</strong> with Bullish/Bearish crossovers</li>
+                        <li><strong>SMA (20, 50) & EMA (20)</strong> trend confirmations</li>
+                    </ul>
+                </div>
 
-</section>
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="feature-icon">📰</span>
+                    </div>
+                    <div class="feature-badge">Lexicon NLP</div>
+                    <h3>Financial News Sentiment Engine</h3>
+                    <p>
+                        Aggregates live market news for searched equities and executes lexicon-based NLP tokenization to classify headline polarity and market mood.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Live headline feed from Yahoo Finance</li>
+                        <li>Polarity scoring (-100 to +100 index)</li>
+                        <li>🟢 Bullish, 🟡 Neutral, and 🔴 Bearish tags</li>
+                    </ul>
+                </div>
 
-<section class="features">
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="feature-icon">📈</span>
+                    </div>
+                    <div class="feature-badge">Chart.js 4.x</div>
+                    <h3>Continuous Trajectory Visualization</h3>
+                    <p>
+                        Interactive dynamic chart seamlessly connecting 1 year of daily historical prices to the projected 30-day forward forecast curve with glowing gradients.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Historical solid line with translucent area fill</li>
+                        <li>Dashed purple forward-projected curve</li>
+                        <li>Hover tooltips and responsive viewport resizing</li>
+                    </ul>
+                </div>
 
-    <div class="feature">
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="feature-icon">🏢</span>
+                    </div>
+                    <div class="feature-badge">Finnhub API</div>
+                    <h3>Company Profile & Fundamentals</h3>
+                    <p>
+                        Instantly retrieves official company branding, corporate logos, primary listing exchange (NASDAQ, NYSE), industry category, and IPO inception date.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Live autocomplete with debounced API queries</li>
+                        <li>Official high-resolution company logos</li>
+                        <li>Exchange & sector categorizations</li>
+                    </ul>
+                </div>
 
-        <div class="icon">📊</div>
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="feature-icon">🚦</span>
+                    </div>
+                    <div class="feature-badge">Decision Logic</div>
+                    <h3>Algorithmic Investment Signals</h3>
+                    <p>
+                        Synthesizes multi-horizon percentage returns and momentum indicators into clear, actionable recommendations: <strong>BUY</strong>, <strong>HOLD</strong>, or <strong>SELL</strong>.
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>🟢 BUY</strong>: Expected Return &gt; +1.5%</li>
+                        <li><strong>🟡 HOLD</strong>: Return between -1.5% and +1.5%</li>
+                        <li><strong>🔴 SELL</strong>: Expected Return &lt; -1.5%</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <h3>Company Details</h3>
+    <!-- Architecture & Request Lifecycle Section -->
+    <section id="architecture" class="section-padding">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">System Pipeline</span>
+                <h2 class="section-title">End-to-End Request Architecture</h2>
+                <p class="section-description">
+                    How data flows seamlessly from your search query into machine learning inference and interactive visualization.
+                </p>
+            </div>
 
-        <p>
+            <div class="pipeline-steps">
+                <div class="step-card">
+                    <div class="step-badge">Step 1</div>
+                    <div class="step-icon">🔍</div>
+                    <h4>Ticker Ingestion & Metadata</h4>
+                    <p>User queries ticker (e.g. <code>AAPL</code>). Finnhub API fetches company profile, official logo, IPO year, and exchange metadata.</p>
+                </div>
 
-            View exchange, IPO, industry and country.
+                <div class="step-connector">→</div>
 
-        </p>
+                <div class="step-card">
+                    <div class="step-badge">Step 2</div>
+                    <div class="step-icon">📥</div>
+                    <h4>1-Year OHLCV Data Acquisition</h4>
+                    <p>Backend requests 1 year of daily historical prices via Yahoo Finance API (Open, High, Low, Close, Volume) into a Pandas DataFrame.</p>
+                </div>
 
-    </div>
+                <div class="step-connector">→</div>
 
-    <div class="feature">
+                <div class="step-card">
+                    <div class="step-badge">Step 3</div>
+                    <div class="step-icon">⚙️</div>
+                    <h4>Feature Engineering & Indicators</h4>
+                    <p>Vectorized mathematical calculation of RSI(14), MACD(12,26,9), SMA(20,50), EMA(20), return volatility, and auto-regressive lags.</p>
+                </div>
 
-        <div class="icon">🤖</div>
+                <div class="step-connector">→</div>
 
-        <h3>ML Prediction</h3>
+                <div class="step-card">
+                    <div class="step-badge">Step 4</div>
+                    <div class="step-icon">🤖</div>
+                    <h4>Recursive ML & NLP Scoring</h4>
+                    <p>Random Forest Regressor generates 30-day recursive forecasts while NLP engine tokenizes news headlines to score market sentiment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <p>
+    <!-- Tech Stack Showcase Section -->
+    <section id="tech-stack" class="section-padding bg-surface">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Technology Infrastructure</span>
+                <h2 class="section-title">Full-Stack Modern Tech Stack</h2>
+                <p class="section-description">
+                    Built with high-performance, industry-standard technologies for speed, precision, and zero-cost serverless scalability.
+                </p>
+            </div>
 
-            Predict tomorrow's closing price using Machine Learning.
+            <div class="tech-grid">
+                <!-- Tech Layer 1: Frontend -->
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <span class="tech-layer-icon">💻</span>
+                        <h3>Frontend & Visualization</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-pill">
+                            <span class="tech-name">HTML5 / Semantic Web</span>
+                            <span class="tech-desc">Accessible, responsive document structure</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Modern CSS3</span>
+                            <span class="tech-desc">Glassmorphism, CSS Variables & Keyframe Animations</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">JavaScript (ES6+)</span>
+                            <span class="tech-desc">Async/Await, dynamic DOM & debounced fetching</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Chart.js 4.x</span>
+                            <span class="tech-desc">Dual-dataset continuous price trajectory charting</span>
+                        </div>
+                    </div>
+                </div>
 
-        </p>
+                <!-- Tech Layer 2: Machine Learning -->
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <span class="tech-layer-icon">🧠</span>
+                        <h3>Machine Learning & Quant</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-pill">
+                            <span class="tech-name">Python 3.11</span>
+                            <span class="tech-desc">Core quantitative computation runtime</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Scikit-learn</span>
+                            <span class="tech-desc">Random Forest Regressor with bootstrap bagging</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Pandas</span>
+                            <span class="tech-desc">Time-series data manipulation & rolling windows</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">NumPy</span>
+                            <span class="tech-desc">Vectorized mathematical arrays & matrix algebra</span>
+                        </div>
+                    </div>
+                </div>
 
-    </div>
+                <!-- Tech Layer 3: Backend & Deployment -->
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <span class="tech-layer-icon">☁️</span>
+                        <h3>Backend & Cloud Architecture</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-pill">
+                            <span class="tech-name">Flask</span>
+                            <span class="tech-desc">Lightweight RESTful API framework</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Vercel Serverless Functions</span>
+                            <span class="tech-desc">Stateless Python micro-containers at the edge</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Docker & Docker Compose</span>
+                            <span class="tech-desc">Reproducible containerized local/cloud runtime</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Yahoo Finance (`yfinance`)</span>
+                            <span class="tech-desc">Daily historical market data pipeline</span>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="feature">
+                <!-- Tech Layer 4: NLP & External APIs -->
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <span class="tech-layer-icon">⚡</span>
+                        <h3>NLP & Market Data APIs</h3>
+                    </div>
+                    <div class="tech-items">
+                        <div class="tech-pill">
+                            <span class="tech-name">Finnhub Stock API</span>
+                            <span class="tech-desc">Company profiles, official logos & autocomplete</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">Lexicon NLP Engine</span>
+                            <span class="tech-desc">Financial market sentiment polarity classifier</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">CORS & REST Protocol</span>
+                            <span class="tech-desc">Secure cross-origin client-server communication</span>
+                        </div>
+                        <div class="tech-pill">
+                            <span class="tech-name">JSON Data Contracts</span>
+                            <span class="tech-desc">Standardized multi-horizon response payload</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <div class="icon">📈</div>
+    <!-- FAQ & Viva Q&A Accordion -->
+    <section id="faq" class="section-padding">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Frequently Asked Questions</span>
+                <h2 class="section-title">Technical Deep-Dive & Viva Prep</h2>
+                <p class="section-description">
+                    Everything you need to know about the mathematics, models, and design decisions behind StockVision AI.
+                </p>
+            </div>
 
-        <h3>Investment Insight</h3>
+            <div class="faq-accordion">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Why choose Random Forest over Linear Regression or Deep LSTM?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>
+                            <strong>Linear Regression</strong> assumes a rigid linear relationship between time and price ($y = mx + c$), which fails to capture market volatility and momentum reversals. <strong>LSTMs</strong> require heavy deep learning libraries (&gt;150MB) and multi-second training times that violate serverless limits. <strong>Random Forest</strong> combines non-linear feature splits on technical indicators (RSI, MACD, Moving Averages) with sub-50ms inference, making it lightweight and accurate for serverless web applications.
+                        </p>
+                    </div>
+                </div>
 
-        <p>
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does the 30-Day Multi-Step Recursive Forecasting mechanism work?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>
+                            We employ an <strong>auto-regressive recursive strategy</strong>. The model first predicts Day $t+1$ using historical features. That predicted price is then appended to the simulated time series to recalculate rolling moving averages, dynamic RSI, and lag values to predict Day $t+2$. This process repeats for 30 iterations to extract 1-Day, 7-Day, and 30-Day price targets.
+                        </p>
+                    </div>
+                </div>
 
-            Get Buy, Hold and Sell recommendation.
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How is the 14-Period RSI calculated?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>
+                            RSI computes momentum on a scale of 0 to 100 based on the ratio of 14-day average gains to average losses:
+                            <br>
+                            <code>RSI = 100 - (100 / (1 + (Avg Gain / Avg Loss)))</code>
+                            <br>
+                            An RSI below 30 signals an oversold condition (potential buying rebound), while an RSI above 70 indicates an overbought condition (potential pullback).
+                        </p>
+                    </div>
+                </div>
 
-        </p>
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does the NLP Financial News Sentiment Engine classify mood?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>
+                            The backend fetches recent headlines via Yahoo Finance and normalizes the text into word tokens. It scores them against curated financial lexicons of Bullish words (<em>surge, rally, profit, upgrade, record</em>) and Bearish words (<em>drop, plunge, miss, loss, lawsuit, crash</em>) to compute a normalized sentiment score index from -100 to +100.
+                        </p>
+                    </div>
+                </div>
 
-    </div>
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Can this application be deployed for free on Vercel?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>
+                            Yes! StockVision AI is pre-configured with <code>vercel.json</code> and lightweight dependencies in <code>requirements.txt</code>. The Python ML inference runs as a stateless Vercel Serverless function at the edge with zero hosting or API subscription costs.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-</section>
+    <!-- Call to Action Banner -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <div class="cta-content">
+                    <h2>Ready to Experience Next-Gen Stock Intelligence?</h2>
+                    <p>Analyze any global stock ticker with multi-horizon AI price targets, quantitative oscillators, and live sentiment analysis in seconds.</p>
+                </div>
+                <div class="cta-action">
+                    <a href="#search-anchor" class="btn btn-primary btn-large">Launch Search Terminal ⚡</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script src="script.js"></script>
+    <!-- Comprehensive Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <div class="logo">
+                    <span class="logo-icon">📈</span>
+                    <span class="logo-text">StockVision <span class="gradient-text">AI</span></span>
+                </div>
+                <p class="footer-tagline">
+                    Empowering everyday investors with institutional-grade quantitative forecasting and NLP sentiment analytics.
+                </p>
+                <div class="footer-badges">
+                    <span class="badge-mini">Python 3.11</span>
+                    <span class="badge-mini">Scikit-learn</span>
+                    <span class="badge-mini">Flask</span>
+                    <span class="badge-mini">Chart.js</span>
+                    <span class="badge-mini">Vercel Ready</span>
+                </div>
+            </div>
+
+            <div class="footer-links-grid">
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#search-anchor">Search Terminal</a></li>
+                        <li><a href="#features">Feature Suite</a></li>
+                        <li><a href="#problems">Problem Statements</a></li>
+                        <li><a href="#architecture">Architecture Pipeline</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quant & Models</h4>
+                    <ul>
+                        <li><a href="#tech-stack">Random Forest ML</a></li>
+                        <li><a href="#tech-stack">RSI & MACD Engine</a></li>
+                        <li><a href="#tech-stack">News Sentiment NLP</a></li>
+                        <li><a href="#faq">Study Notes & Viva Guide</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Tickers</h4>
+                    <ul>
+                        <li><a href="javascript:void(0)" onclick="quickSelect('AAPL')">Apple (AAPL)</a></li>
+                        <li><a href="javascript:void(0)" onclick="quickSelect('NVDA')">NVIDIA (NVDA)</a></li>
+                        <li><a href="javascript:void(0)" onclick="quickSelect('TSLA')">Tesla (TSLA)</a></li>
+                        <li><a href="javascript:void(0)" onclick="quickSelect('MSFT')">Microsoft (MSFT)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>© 2026 StockVision AI • Designed for Quantitative Research, Machine Learning & Financial Education.</p>
+            <p class="disclaimer-text">
+                ⚠️ <strong>Educational Disclaimer</strong>: StockVision AI is an academic and analytical forecasting tool. Stock market investments carry risk; forecasts should not be construed as definitive financial advice.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script src="script.js"></script>
 
 </body>
-
 </html>
