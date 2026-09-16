@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StockVision AI - User Profile Dashboard with Recent Stocks, Favorites, and AI-Powered News Feeds.">
+    <title>User Profile & Portfolio Intelligence — StockVision AI</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="stock.css">
+</head>
+
+<body class="profile-page-body">
+
+    <!-- Ambient Glowing Background FX -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar-wrapper">
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">📈</span>
+                <span class="logo-text">StockVision <span class="gradient-text">AI</span></span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#search-anchor">Search Terminal</a></li>
+                <li><a href="profile.html" class="active-nav">My Profile</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-label" id="sysDbStatus">MongoDB Synced</span>
+                </div>
+                <!-- Dynamic Auth Buttons injected by auth.js -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- Profile Dashboard Main Container -->
+    <main class="container profile-container">
+
+        <!-- Not Logged In Prompt (if guest visits) -->
+        <div id="guestPrompt" class="guest-card" style="display: none;">
+            <div class="guest-card-content">
+                <span class="guest-icon">🔒</span>
+                <h2>Account Required</h2>
+                <p>Please sign in or create an account to view your recent stocks, manage your favorites, and get customized AI financial news.</p>
+                <div class="guest-actions">
+                    <button onclick="openAuthModal('login')" class="btn btn-primary">Sign In</button>
+                    <button onclick="openAuthModal('register')" class="btn btn-nav">Create Account</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authenticated Profile Content -->
+        <div id="profileContent" style="display: none;">
+            
+            <!-- User Header Hero Card -->
+            <div class="profile-hero-card">
+                <div class="profile-avatar-wrapper">
+                    <div class="profile-avatar" id="profAvatar">TR</div>
+                    <div class="avatar-ring"></div>
+                </div>
+
+                <div class="profile-user-info">
+                    <div class="profile-badges-row">
+                        <span class="badge-role">⚡ Active Quantitative Trader</span>
+                        <span class="badge-cache" id="redisBadge">⚡ Redis Cache Active</span>
+                    </div>
+                    <h1 id="profUsername" class="profile-name">Trader</h1>
+                    <p id="profEmail" class="profile-email">trader@example.com</p>
+                    <p class="profile-joined">Member since <span id="profCreated">Recent</span></p>
+                </div>
+
+                <div class="profile-quick-actions">
+                    <a href="index.html#search-anchor" class="btn btn-sm-primary">Search New Stock ⚡</a>
+                    <button onclick="handleLogout()" class="btn btn-sm-outline">Sign Out</button>
+                </div>
+            </div>
+
+            <!-- Stats Metric Row -->
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-meta">
+                        <span class="stat-label">Favorite Stocks</span>
+                        <span class="stat-number" id="statFavorites">0</span>
+                    </div>
+                </div>
+
+                <div class="profile-stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-meta">
+                        <span class="stat-label">Recently Checked</span>
+                        <span class="stat-number" id="statRecent">0</span>
+                    </div>
+                </div>
+
+                <div class="profile-stat-card">
+                    <div class="stat-icon">📰</div>
+                    <div class="stat-meta">
+                        <span class="stat-label">AI News Feeds</span>
+                        <span class="stat-number" id="statNewsFeeds">6 Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Portfolio Section: Recent Stocks & Favorite Stocks -->
+            <div class="profile-sections-row">
+
+                <!-- Favorite Stocks Column -->
+                <div class="profile-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3>⭐ Favorite Stocks</h3>
+                            <p class="card-sub">Marked stocks stored in MongoDB for instant access.</p>
+                        </div>
+                        <span class="count-pill" id="favCountPill">0</span>
+                    </div>
+
+                    <!-- Quick Add Favorite Form -->
+                    <div class="quick-add-fav-wrap">
+                        <input type="text" id="addFavInput" placeholder="Add ticker (e.g. AAPL, NVDA, TSLA)" maxlength="10">
+                        <button onclick="addFavoriteFromProfile()" class="btn-add-fav">+ Add</button>
+                    </div>
+
+                    <!-- Favorites List -->
+                    <div id="favoritesList" class="stocks-list">
+                        <p class="loading-text">Loading your favorites...</p>
+                    </div>
+                </div>
+
+                <!-- Recent Stocks Column -->
+                <div class="profile-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3>⏱️ Recently Checked Stocks</h3>
+                            <p class="card-sub">Your recent ML forecasts and technical analyses.</p>
+                        </div>
+                        <span class="count-pill" id="recentCountPill">0</span>
+                    </div>
+
+                    <!-- Recent List -->
+                    <div id="recentStocksList" class="stocks-list">
+                        <p class="loading-text">Loading recently checked stocks...</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- News Feed 1: 3 News Related to Favorite Stocks -->
+            <div class="profile-card news-section-card">
+                <div class="card-header-flex">
+                    <div>
+                        <h3>📰 3 News Related to Your Favorite Stocks</h3>
+                        <p class="card-sub">Real-time financial headlines and NLP sentiment for your marked tickers (cached with Redis).</p>
+                    </div>
+                    <span class="badge-tag">Personalized Feed</span>
+                </div>
+
+                <div id="favoriteNewsGrid" class="profile-news-grid">
+                    <p class="loading-text">Fetching news for your favorite stocks...</p>
+                </div>
+            </div>
+
+            <!-- News Feed 2: 3 Top Stock Market News -->
+            <div class="profile-card news-section-card">
+                <div class="card-header-flex">
+                    <div>
+                        <h3>🌐 3 Top Stock Market News</h3>
+                        <p class="card-sub">Macro headlines and market momentum across Wall Street (cached with Redis).</p>
+                    </div>
+                    <span class="badge-tag">Macro Market</span>
+                </div>
+
+                <div id="topNewsGrid" class="profile-news-grid">
+                    <p class="loading-text">Fetching top financial market news...</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-simple">
+        <div class="container">
+            <p>© 2026 StockVision AI • Powered by MongoDB, Redis Caching & Random Forest ML.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="auth.js"></script>
+    <script src="profile.js"></script>
+
+</body>
+</html>

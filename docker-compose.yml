@@ -5,3 +5,27 @@ services:
     build: ./backend
     ports:
       - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/stockvision
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=stockvision_jwt_super_secret_key_2026
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo:latest
+    container_name: stockvision-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:alpine
+    container_name: stockvision-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:

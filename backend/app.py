@@ -1,13 +1,34 @@
-from flask import Flask, request, jsonify
+import os
+import re
+import datetime
+from flask import Flask, request, jsonify, send_from_directory, g
 from flask_cors import CORS
 import yfinance as yf
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-import datetime
-import re
 
-app = Flask(__name__)
+# Internal Modules
+from db import (
+    get_db, create_user, find_user_by_identifier, find_user_by_id,
+    add_recent_stock, add_favorite_stock, remove_favorite_stock,
+    get_user_favorites, get_user_recent_stocks, format_user_doc
+)
+from cache_manager import cache
+from auth import (
+    hash_password, verify_password, generate_token,
+    jwt_required, get_optional_current_user
+)
+from news_service import get_top_market_news, get_favorite_stocks_news
+
+# Static assets directory determination
+base_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(base_dir, ".."))
+public_dir = os.path.join(parent_dir, "public")
+frontend_dir = os.path.join(parent_dir, "frontend")
+static_dir = frontend_dir if os.path.isdir(frontend_dir) else public_dir
+
+app = Flask(__name__, static_folder=static_dir)
 CORS(app)
 
 
@@ -303,22 +324,297 @@ def analyze_news_sentiment(symbol):
 
 
 # -------------------------------------------------------------
-# 4. API Endpoints
+# 4. Auth & User Management Endpoints (MongoDB + JWT)
 # -------------------------------------------------------------
-@app.route("/", methods=["GET"])
+
+@app.route("/api/auth/register", methods=["POST"])
+def register():
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        username = (data.get("username") or "").strip()
+        email = (data.get("email") or "").strip().lower()
+        password = data.get("password") or ""
+
+        if not username or len(username) < 3:
+            return jsonify({"error": "Username must be at least 3 characters long."}), 400
+
+        if not email or "@" not in email or "." not in email:
+            return jsonify({"error": "Please provide a valid email address."}), 400
+
+        if not password or len(password) < 6:
+            return jsonify({"error": "Password must be at least 6 characters long."}), 400
+
+        pwd_hash = hash_password(password)
+        created_user = create_user(username, email, pwd_hash)
+        
+        token = generate_token(created_user["id"], created_user["username"], created_user["email"])
+        return jsonify({
+            "message": "User registered successfully",
+            "token": token,
+            "user": created_user
+        }), 201
+
+    except ValueError as val_err:
+        return jsonify({"error": str(val_err)}), 409
+    except Exception as e:
+        return jsonify({"error": f"Failed to register account: {str(e)}"}), 500
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def login():
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        identifier = (data.get("emailOrUsername") or data.get("email") or data.get("username") or "").strip()
+        password = data.get("password") or ""
+
+        if not identifier or not password:
+            return jsonify({"error": "Please provide your email/username and password."}), 400
+
+        user_raw = find_user_by_identifier(identifier)
+        if not user_raw:
+            return jsonify({"error": "Invalid credentials. No account found."}), 401
+
+        pwd_hash = user_raw.get("password_hash", "")
+        if not verify_password(password, pwd_hash):
+            return jsonify({"error": "Invalid credentials. Incorrect password."}), 401
+
+        user_formatted = format_user_doc(user_raw)
+        token = generate_token(user_formatted["id"], user_formatted["username"], user_formatted["email"])
+
+        return jsonify({
+            "message": "Login successful",
+            "token": token,
+            "user": user_formatted
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Login failed: {str(e)}"}), 500
+
+
+@app.route("/api/auth/me", methods=["GET"])
+@jwt_required
+def get_current_user_profile():
+    return jsonify({
+        "user": g.user
+    }), 200
+
+
+# -------------------------------------------------------------
+# 5. User Profile, Favorites, and Recent Stocks Endpoints
+# -------------------------------------------------------------
+
+@app.route("/api/user/profile", methods=["GET"])
+@jwt_required
+def get_user_profile():
+    user_id = g.user_id
+    cache_key = f"user:profile:{user_id}"
+    
+    # Check Redis cache
+    cached_profile = cache.get(cache_key)
+    if cached_profile:
+        return jsonify({
+            "profile": cached_profile,
+            "cached": True
+        }), 200
+
+    user = find_user_by_id(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    formatted = format_user_doc(user)
+    stats = {
+        "favoritesCount": len(formatted.get("favorites", [])),
+        "recentCount": len(formatted.get("recent_stocks", []))
+    }
+    profile_data = {
+        **formatted,
+        "stats": stats
+    }
+
+    # Cache profile for 60 seconds
+    cache.set(cache_key, profile_data, ex=60)
+    return jsonify({
+        "profile": profile_data,
+        "cached": False
+    }), 200
+
+
+@app.route("/api/user/recent", methods=["GET", "POST"])
+@jwt_required
+def handle_recent_stocks():
+    user_id = g.user_id
+
+    if request.method == "POST":
+        data = request.get_json(force=True, silent=True) or {}
+        symbol = (data.get("symbol") or "").strip().upper()
+        if not symbol:
+            return jsonify({"error": "Stock symbol is required"}), 400
+
+        add_recent_stock(user_id, symbol)
+        # Invalidate profile cache
+        cache.delete(f"user:profile:{user_id}")
+
+        recent = get_user_recent_stocks(user_id)
+        return jsonify({
+            "message": f"Added {symbol} to recent stocks",
+            "recent_stocks": recent
+        }), 200
+
+    # GET request
+    recent = get_user_recent_stocks(user_id)
+    return jsonify({
+        "recent_stocks": recent
+    }), 200
+
+
+@app.route("/api/user/favorites", methods=["GET", "POST"])
+@jwt_required
+def handle_favorites():
+    user_id = g.user_id
+
+    if request.method == "POST":
+        data = request.get_json(force=True, silent=True) or {}
+        symbol = (data.get("symbol") or "").strip().upper()
+        if not symbol:
+            return jsonify({"error": "Stock symbol is required"}), 400
+
+        add_favorite_stock(user_id, symbol)
+        # Invalidate profile and news cache
+        cache.delete(f"user:profile:{user_id}")
+        cache.delete_pattern("news:favorites:*")
+
+        favs = get_user_favorites(user_id)
+        return jsonify({
+            "message": f"Added {symbol} to favorites",
+            "favorites": favs
+        }), 200
+
+    # GET request
+    favs = get_user_favorites(user_id)
+    return jsonify({
+        "favorites": favs
+    }), 200
+
+
+@app.route("/api/user/favorites/<symbol>", methods=["DELETE"])
+@jwt_required
+def delete_favorite(symbol):
+    user_id = g.user_id
+    sym = (symbol or "").strip().upper()
+    if not sym:
+        return jsonify({"error": "Stock symbol is required"}), 400
+
+    remove_favorite_stock(user_id, sym)
+    # Invalidate caches
+    cache.delete(f"user:profile:{user_id}")
+    cache.delete_pattern("news:favorites:*")
+
+    favs = get_user_favorites(user_id)
+    return jsonify({
+        "message": f"Removed {sym} from favorites",
+        "favorites": favs
+    }), 200
+
+
+# -------------------------------------------------------------
+# 6. News Endpoints (3 Favorite News & 3 Top Market News + Redis)
+# -------------------------------------------------------------
+
+@app.route("/api/news/top", methods=["GET"])
+def top_stock_news():
+    """
+    Returns 3 top stock market news, cached in Redis.
+    """
+    try:
+        limit = int(request.args.get("limit", 3))
+        news = get_top_market_news(limit=limit)
+        return jsonify({
+            "count": len(news),
+            "news": news
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to retrieve top news: {str(e)}"}), 500
+
+
+@app.route("/api/user/favorite-news", methods=["GET"])
+@jwt_required
+def favorite_stocks_news():
+    """
+    Returns 3 news articles related to the user's favorite stocks, cached in Redis.
+    """
+    try:
+        user_id = g.user_id
+        favorites = get_user_favorites(user_id)
+
+        if not favorites:
+            return jsonify({
+                "message": "No favorite stocks marked yet. Mark favorite stocks to see related news.",
+                "favorites": [],
+                "news": []
+            }), 200
+
+        limit = int(request.args.get("limit", 3))
+        news = get_favorite_stocks_news(favorites, limit=limit)
+        return jsonify({
+            "favorites": favorites,
+            "count": len(news),
+            "news": news
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to retrieve favorite stock news: {str(e)}"}), 500
+
+
+# -------------------------------------------------------------
+# 7. System & Prediction Endpoints
+# -------------------------------------------------------------
+
+@app.route("/api/system/status", methods=["GET"])
+def system_status():
+    db_obj = get_db()
+    mongo_ok = False
+    if db_obj is not None:
+        try:
+            mongo_ok = bool(db_obj.client.admin.command("ping"))
+        except Exception:
+            mongo_ok = False
+
+    redis_stat = cache.get_status()
+
+    return jsonify({
+        "status": "online",
+        "service": "StockVision AI Engine",
+        "mongo": {
+            "connected": mongo_ok,
+            "database": db_obj.name if db_obj is not None else None
+        },
+        "redis": redis_stat
+    }), 200
+
+
 @app.route("/health", methods=["GET"])
+@app.route("/api/health", methods=["GET"])
 def health_check():
     return jsonify({
         "status": "healthy",
         "service": "StockVision AI Backend",
         "model": "Random Forest Regressor (Multi-Timeframe 1D, 7D, 30D)",
-        "features": ["Technical Indicators", "News Sentiment Engine", "Chart.js Forecast Curve"]
+        "features": [
+            "Technical Indicators",
+            "News Sentiment Engine",
+            "Chart.js Forecast Curve",
+            "JWT Authentication",
+            "MongoDB Storage",
+            "Redis Caching"
+        ]
     }), 200
 
 
-@app.route("/predict", methods=["POST"])
-@app.route("/api/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "OPTIONS"])
+@app.route("/api/predict", methods=["POST", "OPTIONS"])
 def predict():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
     try:
         data = request.get_json(force=True, silent=True) or {}
         symbol = data.get("symbol", "").strip().upper()
@@ -326,8 +622,36 @@ def predict():
         if not symbol:
             return jsonify({"error": "Stock symbol is required"}), 400
 
+        # Automatic recent stock recording for logged-in users
+        opt_user = get_optional_current_user()
+        if opt_user:
+            try:
+                add_recent_stock(opt_user["id"], symbol)
+                cache.delete(f"user:profile:{opt_user['id']}")
+            except Exception as rec_err:
+                print(f"Error auto-recording recent stock: {rec_err}")
+
+        # Check prediction cache in Redis
+        cache_key = f"predict:{symbol}"
+        cached_pred = cache.get(cache_key)
+        if cached_pred:
+            return jsonify(cached_pred), 200
+
         # Fetch last 1 year of daily historical data
-        df = yf.download(symbol, period="1y", multi_level_index=False, progress=False)
+        df = None
+        symbols_to_try = [symbol]
+        if "." in symbol:
+            symbols_to_try.append(symbol.split(".")[0])
+
+        for sym in symbols_to_try:
+            try:
+                df_temp = yf.download(sym, period="1y", multi_level_index=False, progress=False)
+                if df_temp is not None and not df_temp.empty and "Close" in df_temp.columns:
+                    df = df_temp
+                    symbol = sym
+                    break
+            except Exception:
+                continue
 
         if df is None or df.empty or "Close" not in df.columns:
             return jsonify({"error": f"Invalid stock symbol or no data available for '{symbol}'"}), 400
@@ -346,8 +670,7 @@ def predict():
         # Analyze News Sentiment
         sentiment_results = analyze_news_sentiment(symbol)
 
-        # Return comprehensive response
-        return jsonify({
+        response_payload = {
             "symbol": symbol,
             "currentPrice": current_price,
             "predictedPrice": ml_results["predictions"]["1d"]["price"],
@@ -358,11 +681,34 @@ def predict():
             "sentiment": sentiment_results,
             "history": history,
             "forecast": ml_results["forecast_curve"]
-        }), 200
+        }
+
+        # Cache forecast for 5 minutes (300s)
+        cache.set(cache_key, response_payload, ex=300)
+
+        return jsonify(response_payload), 200
 
     except Exception as e:
         return jsonify({"error": f"Failed to generate prediction: {str(e)}"}), 500
 
 
+# -------------------------------------------------------------
+# 8. Static Web App Serving
+# -------------------------------------------------------------
+
+@app.route("/", methods=["GET"])
+def root_index():
+    if os.path.isdir(static_dir) and os.path.exists(os.path.join(static_dir, "index.html")):
+        return send_from_directory(static_dir, "index.html")
+    return jsonify({"message": "StockVision AI API is live."}), 200
+
+
+@app.route("/<path:path>", methods=["GET"])
+def serve_static(path):
+    if os.path.isdir(static_dir) and os.path.exists(os.path.join(static_dir, path)):
+        return send_from_directory(static_dir, path)
+    return jsonify({"error": f"Path '{path}' not found."}), 404
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)

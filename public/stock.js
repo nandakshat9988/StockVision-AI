@@ -2,6 +2,7 @@ const apiKey = "d9h0m51r01qmrn76d0c0d9h0m51r01qmrn76d0cg";
 const stock = (localStorage.getItem("stock") || "").trim().toUpperCase();
 
 let chartInstance = null;
+let isCurrentlyFavorited = false;
 
 function getApiEndpoint() {
     const isLiveServer = window.location.port === "5500" || window.location.port === "5501" || window.location.port === "8080" || window.location.protocol === "file:";
@@ -80,6 +81,87 @@ async function loadStockProfile() {
     }
 }
 
+async function syncFavoriteButtonState() {
+    const btn = document.getElementById("favoriteBtn");
+    const star = document.getElementById("favStarIcon");
+    const label = document.getElementById("favBtnLabel");
+    if (!btn) return;
+
+    if (!isLoggedIn()) {
+        isCurrentlyFavorited = false;
+        btn.classList.remove("active");
+        if (star) star.innerText = "⭐";
+        if (label) label.innerText = "Add to Favorites";
+        return;
+    }
+
+    try {
+        const res = await authFetch("/api/user/favorites");
+        if (res.ok) {
+            const data = await res.json();
+            const favs = (data.favorites || []).map(f => f.toUpperCase());
+            isCurrentlyFavorited = favs.includes(stock);
+
+            if (isCurrentlyFavorited) {
+                btn.classList.add("active");
+                if (star) star.innerText = "★";
+                if (label) label.innerText = "Favorited";
+            } else {
+                btn.classList.remove("active");
+                if (star) star.innerText = "⭐";
+                if (label) label.innerText = "Add to Favorites";
+            }
+        }
+    } catch (e) {
+        console.warn("Failed to check favorite status:", e);
+    }
+}
+
+async function handleFavoriteToggle() {
+    if (!isLoggedIn()) {
+        openAuthModal("login");
+        return;
+    }
+
+    const btn = document.getElementById("favoriteBtn");
+    const star = document.getElementById("favStarIcon");
+    const label = document.getElementById("favBtnLabel");
+    if (!btn) return;
+
+    btn.disabled = true;
+
+    try {
+        if (isCurrentlyFavorited) {
+            // Remove
+            const res = await authFetch(`/api/user/favorites/${encodeURIComponent(stock)}`, {
+                method: "DELETE"
+            });
+            if (res.ok) {
+                isCurrentlyFavorited = false;
+                btn.classList.remove("active");
+                if (star) star.innerText = "⭐";
+                if (label) label.innerText = "Add to Favorites";
+            }
+        } else {
+            // Add
+            const res = await authFetch("/api/user/favorites", {
+                method: "POST",
+                body: JSON.stringify({ symbol: stock })
+            });
+            if (res.ok) {
+                isCurrentlyFavorited = true;
+                btn.classList.add("active");
+                if (star) star.innerText = "★";
+                if (label) label.innerText = "Favorited";
+            }
+        }
+    } catch (e) {
+        console.error("Favorite toggle error:", e);
+    } finally {
+        btn.disabled = false;
+    }
+}
+
 async function predictStock(symbol) {
     if (!symbol) {
         showStatus("No stock symbol provided. Please go back and select a stock.", "error");
@@ -92,11 +174,9 @@ async function predictStock(symbol) {
         const endpoint = getApiEndpoint();
         console.log(`Sending prediction request to: ${endpoint}`);
 
-        const response = await fetch(endpoint, {
+        // Use authFetch to include user token for auto-recording recent stocks
+        const response = await authFetch(endpoint, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify({ symbol: symbol })
         });
 
@@ -235,10 +315,8 @@ function renderChart(history, forecast = []) {
     const forecastLabels = forecast.map((_, i) => `+${i + 1}d`);
     const allLabels = [...historyLabels, ...forecastLabels];
 
-    // Historical dataset padded with nulls for forecast segment
     const historyData = [...history, ...Array(forecast.length).fill(null)];
 
-    // Forecast dataset padded with nulls for history segment (bridging from last history point)
     const lastHistPrice = history.length > 0 ? history[history.length - 1] : null;
     const forecastData = Array(totalDays - 1).fill(null);
     if (lastHistPrice !== null) {
@@ -291,7 +369,7 @@ function renderChart(history, forecast = []) {
                     labels: {
                         color: "#cbd5e1",
                         font: {
-                            family: "'Inter', sans-serif",
+                            family: "'Plus Jakarta Sans', sans-serif",
                             size: 13,
                             weight: "600"
                         },
@@ -348,6 +426,7 @@ async function init() {
     }
 
     await loadStockProfile();
+    await syncFavoriteButtonState();
     await predictStock(stock);
 }
 
